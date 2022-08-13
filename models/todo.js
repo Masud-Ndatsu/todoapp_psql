@@ -1,25 +1,40 @@
-const mongoose = require("mongoose");
-const { model, Schema } = mongoose;
-
-const todoSchema = new Schema(
-  {
-    description: {
-      type: String,
-      required: true,
-    },
-    title: {
-      type: String,
-      required: true,
-    },
-    userId: {
-      type: Schema.Types.ObjectId,
-      ref: "User",
-      autopopulate: true,
-    },
-  },
-  {
-    timestamps: true,
+"use strict";
+const { Model } = require("sequelize");
+module.exports = (sequelize, DataTypes) => {
+  class Todo extends Model {
+    /**
+     * Helper method for defining associations.
+     * This method is not a part of Sequelize lifecycle.
+     * The `models/index` file will call this method automatically.
+     */
+    static associate({ User }) {
+      // define association here
+      this.belongsTo(User, { foreignKey: "userId", as: "user" });
+    }
   }
-);
-todoSchema.plugin(require("mongoose-autopopulate"));
-module.exports = { Todo: model("Todo", todoSchema) };
+  Todo.init(
+    {
+      oid: {
+        type: DataTypes.UUID,
+        defaultValue: DataTypes.UUIDV4,
+      },
+      title: {
+        type: DataTypes.STRING,
+        allowNull: false,
+      },
+      body: {
+        type: DataTypes.STRING,
+        allowNull: false,
+      },
+      userId: {
+        type: DataTypes.INTEGER,
+      },
+    },
+    {
+      sequelize,
+      tableName: "todos",
+      modelName: "Todo",
+    }
+  );
+  return Todo;
+};
