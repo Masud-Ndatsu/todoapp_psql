@@ -61,7 +61,7 @@ async function getTodoById(req, res) {
 async function updateTodoById(req, res) {
   try {
     const { oid } = req.params;
-    const { body } = req;
+    const {} = req.body;
 
     const result = await Todo.updateOne({ _id: oid }, { ...body });
     return res.status(200).json({
